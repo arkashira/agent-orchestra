@@ -12,51 +12,49 @@ class AgentOrchestra:
     def __init__(self):
         self.agents = []
 
-    def add_agent(self, agent: Agent):
-        self.agents.append(agent)
+    def add_agent(self, name: str):
+        self.agents.append(Agent(name, "idle"))
 
-    def remove_agent(self, agent_name: str):
-        self.agents = [agent for agent in self.agents if agent.name != agent_name]
+    def remove_agent(self, name: str):
+        self.agents = [agent for agent in self.agents if agent.name != name]
 
-    def get_agent_status(self, agent_name: str):
+    def update_agent_status(self, name: str, status: str):
         for agent in self.agents:
-            if agent.name == agent_name:
+            if agent.name == name:
+                agent.status = status
+                break
+
+    def get_agent_status(self, name: str):
+        for agent in self.agents:
+            if agent.name == name:
                 return agent.status
         return None
 
-    def update_agent_status(self, agent_name: str, status: str):
-        for agent in self.agents:
-            if agent.name == agent_name:
-                agent.status = status
-                return
-
-    def get_all_agents(self):
-        return self.agents
+    def list_agents(self):
+        return [agent.name for agent in self.agents]
 
 def main():
-    parser = argparse.ArgumentParser(description='Agent Orchestra')
-    parser.add_argument('--add', help='Add an agent')
-    parser.add_argument('--remove', help='Remove an agent')
-    parser.add_argument('--status', help='Get an agent status')
-    parser.add_argument('--update', help='Update an agent status')
-    parser.add_argument('--list', action='store_true', help='List all agents')
+    parser = argparse.ArgumentParser(description="Agent Orchestra")
+    parser.add_argument("--add", help="Add an agent")
+    parser.add_argument("--remove", help="Remove an agent")
+    parser.add_argument("--update", help="Update an agent's status")
+    parser.add_argument("--status", help="Get an agent's status")
+    parser.add_argument("--list", action="store_true", help="List all agents")
     args = parser.parse_args()
 
     orchestra = AgentOrchestra()
 
     if args.add:
-        agent_name, agent_status = args.add.split(',')
-        orchestra.add_agent(Agent(agent_name, agent_status))
+        orchestra.add_agent(args.add)
     elif args.remove:
         orchestra.remove_agent(args.remove)
+    elif args.update:
+        name, status = args.update.split(",")
+        orchestra.update_agent_status(name, status)
     elif args.status:
         print(orchestra.get_agent_status(args.status))
-    elif args.update:
-        agent_name, agent_status = args.update.split(',')
-        orchestra.update_agent_status(agent_name, agent_status)
     elif args.list:
-        for agent in orchestra.get_all_agents():
-            print(f'{agent.name}: {agent.status}')
+        print(json.dumps(orchestra.list_agents()))
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

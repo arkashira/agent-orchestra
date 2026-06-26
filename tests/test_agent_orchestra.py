@@ -2,34 +2,34 @@ from agent_orchestra import AgentOrchestra, Agent
 
 def test_add_agent():
     orchestra = AgentOrchestra()
-    agent = Agent('test_agent', 'running')
-    orchestra.add_agent(agent)
-    assert len(orchestra.get_all_agents()) == 1
+    orchestra.add_agent("agent1")
+    assert len(orchestra.agents) == 1
+    assert orchestra.agents[0].name == "agent1"
+    assert orchestra.agents[0].status == "idle"
 
 def test_remove_agent():
     orchestra = AgentOrchestra()
-    agent = Agent('test_agent', 'running')
-    orchestra.add_agent(agent)
-    orchestra.remove_agent('test_agent')
-    assert len(orchestra.get_all_agents()) == 0
-
-def test_get_agent_status():
-    orchestra = AgentOrchestra()
-    agent = Agent('test_agent', 'running')
-    orchestra.add_agent(agent)
-    assert orchestra.get_agent_status('test_agent') == 'running'
+    orchestra.add_agent("agent1")
+    orchestra.remove_agent("agent1")
+    assert len(orchestra.agents) == 0
 
 def test_update_agent_status():
     orchestra = AgentOrchestra()
-    agent = Agent('test_agent', 'running')
-    orchestra.add_agent(agent)
-    orchestra.update_agent_status('test_agent', 'stopped')
-    assert orchestra.get_agent_status('test_agent') == 'stopped'
+    orchestra.add_agent("agent1")
+    orchestra.update_agent_status("agent1", "running")
+    assert orchestra.agents[0].status == "running"
 
-def test_get_all_agents():
+def test_get_agent_status():
     orchestra = AgentOrchestra()
-    agent1 = Agent('test_agent1', 'running')
-    agent2 = Agent('test_agent2', 'stopped')
-    orchestra.add_agent(agent1)
-    orchestra.add_agent(agent2)
-    assert len(orchestra.get_all_agents()) == 2
+    orchestra.add_agent("agent1")
+    assert orchestra.get_agent_status("agent1") == "idle"
+    orchestra.update_agent_status("agent1", "running")
+    assert orchestra.get_agent_status("agent1") == "running"
+
+def test_list_agents():
+    orchestra = AgentOrchestra()
+    orchestra.add_agent("agent1")
+    orchestra.add_agent("agent2")
+    assert len(orchestra.list_agents()) == 2
+    assert "agent1" in orchestra.list_agents()
+    assert "agent2" in orchestra.list_agents()
